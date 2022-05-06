@@ -64,6 +64,7 @@ public class MarkdownParse {
                     break;
                 }
             }
+            System.out.println("L");
             // if (closeParen != markdown.length()-1){
             //     break;
             // }
