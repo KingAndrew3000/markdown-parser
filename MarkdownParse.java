@@ -7,42 +7,75 @@ import java.util.ArrayList;
 
 public class MarkdownParse {
 
-    public static ArrayList<String> getLinks(String markdown){
+	public static ArrayList<String> getLinks(String markdown) {
         ArrayList<String> toReturn = new ArrayList<>();
-        String[] mrkdown = markdown.split("");
-        int openParenCount = 0;
-        int closeParenCount = 0; 
-        int openBracketCount = 0;
-        int closeBracketCount = 0;
+        // find the next [, then find the ], then find the (, then read link upto next )
+        int currentIndex = 0;
+        while(currentIndex < markdown.length()) {
+            int openBracket = markdown.indexOf("[", currentIndex);
 
-        for(int i = 0; i < markdown.length(); i++){
-            String str = mrkdown[i];
-            if(str.equals("(")){
-                openParenCount += 1;
+            if (openBracket == -1) break;
+
+            while (markdown.charAt(openBracket == 0 ? openBracket : openBracket - 1) == '!' || 
+                markdown.charAt(openBracket == 0 ? openBracket : openBracket - 1) == '\\') {
+                openBracket = markdown.indexOf("[", openBracket + 1);
+
+                if (openBracket == -1) break;
             }
-            else if(str.equals(")")){
-                closeParenCount += 1;
+
+
+            int closeBracket = markdown.indexOf("]", openBracket);
+            int openParen = markdown.indexOf("(", closeBracket);
+            while (openParen < markdown.length() && markdown.charAt(openParen + 1) == '(') {
+                openParen += 1;
             }
-            else if(str.equals("[")){
-                openBracketCount += 1;
-            }
-            else if(str.equals("]")){
-                closeBracketCount += 1;
-            }
+            int closeParen = markdown.indexOf(")", openParen);
+
+            if (openBracket == -1 || closeBracket == -1 || openParen == -1 || closeParen == -1) break;
+
+            if (openParen == closeBracket+1) toReturn.add(markdown.substring(openParen + 1, closeParen));
+            currentIndex = closeParen + 1;
         }
 
-        if(openParenCount == openBracketCount & closeParenCount == closeBracketCount){
-            int currentIndex = 0;
-            while(currentIndex < markdown.length()){
-                int openBracket = markdown.indexOf("[", currentIndex);
-                int closeBracket = markdown.indexOf("]", openBracket);
-                int openParen = markdown.indexOf("(", closeBracket);
-                int closeParen = markdown.indexOf(")", openParen);
-                toReturn.add(markdown.substring(openParen + 1, closeParen));
-                currentIndex = closeParen + 1;
-            }
-        }
         return toReturn;
+    }
+	
+//     public static ArrayList<String> getLinks(String markdown){
+//         ArrayList<String> toReturn = new ArrayList<>();
+//         String[] mrkdown = markdown.split("");
+//         int openParenCount = 0;
+//         int closeParenCount = 0; 
+//         int openBracketCount = 0;
+//         int closeBracketCount = 0;
+
+//         for(int i = 0; i < markdown.length(); i++){
+//             String str = mrkdown[i];
+//             if(str.equals("(")){
+//                 openParenCount += 1;
+//             }
+//             else if(str.equals(")")){
+//                 closeParenCount += 1;
+//             }
+//             else if(str.equals("[")){
+//                 openBracketCount += 1;
+//             }
+//             else if(str.equals("]")){
+//                 closeBracketCount += 1;
+//             }
+//         }
+
+//         if(openParenCount == openBracketCount & closeParenCount == closeBracketCount){
+//             int currentIndex = 0;
+//             while(currentIndex < markdown.length()){
+//                 int openBracket = markdown.indexOf("[", currentIndex);
+//                 int closeBracket = markdown.indexOf("]", openBracket);
+//                 int openParen = markdown.indexOf("(", closeBracket);
+//                 int closeParen = markdown.indexOf(")", openParen);
+//                 toReturn.add(markdown.substring(openParen + 1, closeParen));
+//                 currentIndex = closeParen + 1;
+//             }
+//         }
+//         return toReturn;
 
         // ArrayList<String> toReturn = new ArrayList<>();
         // // find the next [, then find the ], then find the (, then read link upto next )
